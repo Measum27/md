@@ -1,0 +1,172 @@
+Certainly! Here's an example of how you can create the CriminalIntent app in Kotlin using Android Studio. It consists of multiple files and follows the Model-View-ViewModel (MVVM) architecture.
+
+First, create a new Android project in Android Studio with the package name `com.example.criminalintent`. Then, replace the contents of the generated files with the following code:
+
+1. Create a model class `Crime.kt` to represent a crime:
+
+```kotlin
+// Crime.kt
+package com.example.criminalintent
+
+import java.util.*
+
+data class Crime(val id: UUID = UUID.randomUUID(), var title: String = "", var isSolved: Boolean = false)
+```
+
+2. Create a ViewModel class `CrimeListViewModel.kt` that manages the list of crimes:
+
+```kotlin
+// CrimeListViewModel.kt
+package com.example.criminalintent
+
+import androidx.lifecycle.ViewModel
+
+class CrimeListViewModel : ViewModel() {
+    val crimes = mutableListOf<Crime>()
+
+    init {
+        // Create some sample crimes
+        for (i in 0 until 100) {
+            val crime = Crime(title = "Crime #$i")
+            crimes.add(crime)
+        }
+    }
+}
+```
+
+3. Create a fragment class `CrimeListFragment.kt` that displays the list of crimes:
+
+```kotlin
+// CrimeListFragment.kt
+package com.example.criminalintent
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+
+class CrimeListFragment : Fragment() {
+    private lateinit var crimeRecyclerView: RecyclerView
+    private var adapter: CrimeAdapter? = null
+    private val crimeListViewModel: CrimeListViewModel by lazy {
+        ViewModelProvider(this).get(CrimeListViewModel::class.java)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_crime_list, container, false)
+        crimeRecyclerView = view.findViewById(R.id.crime_recycler_view)
+        crimeRecyclerView.layoutManager = LinearLayoutManager(context)
+        updateUI()
+
+        return view
+    }
+
+    private fun updateUI() {
+        val crimes = crimeListViewModel.crimes
+        adapter = CrimeAdapter(crimes)
+        crimeRecyclerView.adapter = adapter
+    }
+
+    private inner class CrimeHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private lateinit var crime: Crime
+        private val titleTextView: TextView = itemView.findViewById(R.id.crime_title)
+        private val solvedCheckBox: CheckBox = itemView.findViewById(R.id.crime_solved)
+
+        fun bind(crime: Crime) {
+            this.crime = crime
+            titleTextView.text = this.crime.title
+            solvedCheckBox.isChecked = this.crime.isSolved
+        }
+    }
+
+    private inner class CrimeAdapter(private val crimes: List<Crime>) :
+        RecyclerView.Adapter<CrimeHolder>() {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
+            val view = layoutInflater.inflate(R.layout.list_item_crime, parent, false)
+            return CrimeHolder(view)
+        }
+
+        override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
+            val crime = crimes[position]
+            holder.bind(crime)
+        }
+
+        override fun getItemCount() = crimes.size
+    }
+
+    companion object {
+        fun newInstance(): CrimeListFragment {
+            return CrimeListFragment()
+        }
+    }
+}
+```
+
+4. Create a layout file `fragment_crime_list.xml` for the `CrimeListFragment`:
+
+```xml
+<!-- fragment_crime_list.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/crime_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>
+```
+
+5. Create a layout file `list_item_crime.xml` for the individual crime item in the list:
+
+```xml
+<!-- list_item_crime.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <CheckBox
+        android:id="@+id/crime_solved"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true" />
+
+    <TextView
+        android:id="@+id/crime_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="18sp" />
+
+</LinearLayout>
+```
+
+6. Modify the `activity_main.xml` layout file to include the `CrimeListFragment`:
+
+```xml
+<!-- activity_main.xml -->
+<fragment
+    android:id="@+id/fragment_container"
+    android:name="com.example.criminalintent.CrimeListFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
+```
+
+Once you've created these files and made the necessary modifications, you can run the CriminalIntent app on an Android emulator or device. It will display a list of crimes, and you can click on the checkboxes to toggle the solved status of each crime.
+
+Please note that this example covers the core functionality of the CriminalIntent app, but it may require further enhancements and refinements to meet your specific requirements.
