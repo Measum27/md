@@ -1,0 +1,109 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+
+public class PortalLogin  {
+
+   public static String chromepath ="src\\driver\\chromedriver.exe";
+   public static WebDriver driver;
+   public static String Url ="http://erp.uit.edu:803/StudentPortalBeta/Login";
+   public static String Regno="txtRegistrationNo_cs";
+   public static String RegValue="20B-064-SE";
+   public static String password="txtPassword_m6cs";
+   public static String PasswordValue="yusra98765";
+   public static String SubmitButton ="btnlgn";
+
+   public  static String ProfileClickID="kt_quick_user_toggle";
+   public  static String myprofileclass ="//div[@class='font-weight-bold']";
+
+   public static String NameId="ctl00_ContentPlaceHolder1_lblFstName";
+   public  static  String Actual_name = "SYEDA YUSRA ATIF";
+   public  static  String RegNoID="ctl00_ContentPlaceHolder1_lblReg";
+   public  static  String ActualRegno="20B-064-SE";
+   public  static String nicid="ctl00_ContentPlaceHolder1_lblstuNIC";
+
+   public static String actualnic="4240141502778";
+
+   public  static  void LaunchChrome(String Chromepath){
+
+       try{
+       System.setProperty("webdriver.chrome.driver",Chromepath);
+       ChromeOptions chrome= new ChromeOptions();
+       chrome.addArguments("--remote-allow-all-origins=*");
+       WebDriver chromdriver= new ChromeDriver(chrome);
+       driver=chromdriver;}
+       catch (Exception e){
+           System.out.println(e);
+       }
+
+
+
+   }
+
+ public static  void navigateToUrl(String url){
+       try{
+   driver.get(url);}
+       catch (Exception e){
+           System.out.println(e);
+       }
+ }
+   public  static  void Sleep(int time) throws InterruptedException {
+       Thread.sleep(time);
+
+   }
+ public  static  void EnterKey(String selector, String value){
+     WebElement textbox = driver.findElement(By.id(selector));
+     System.out.println("COMED HERE");
+     textbox.sendKeys(value);
+ }
+
+ public  static  void Click(String Selectorpath){
+       try{
+       WebElement button = driver.findElement(By.id(Selectorpath));
+       button.click();}
+       catch (Exception e){
+           System.out.println(e);
+       }
+
+ }
+   public  static  void ClickbyClass(String Selectorpath){
+       try{
+           WebElement button = driver.findElement(By.xpath(Selectorpath));
+           button.click();}
+       catch (Exception e){
+           System.out.println(e);
+       }
+
+   }
+   public  static  void Verification(String path, String ExpectedValue){
+       WebElement span = driver.findElement(By.id(path));
+       String ActualValue=span.getText();
+       if (ActualValue.equals(ExpectedValue)){
+           System.out.println("VERIFIED"+ActualValue);
+
+       }
+       else {
+           System.out.println("NOT VERFIDIED");
+       }
+
+   }
+ public  static  void main(String args[]) throws InterruptedException {
+       LaunchChrome(chromepath);
+       navigateToUrl(Url);
+       Sleep(2000);
+       EnterKey(Regno,RegValue);
+     EnterKey(password,PasswordValue);
+
+     Click(SubmitButton);
+     Sleep(10000);
+     Click(ProfileClickID);
+     ClickbyClass(myprofileclass);
+     Verification(NameId,Actual_name);
+     Verification(RegNoID,ActualRegno);
+     Verification(nicid,actualnic);
+
+//        EnterKey(Parameterized.passwordId,Parameterized.password);
+ }
+}
